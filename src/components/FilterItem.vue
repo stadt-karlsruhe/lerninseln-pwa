@@ -63,7 +63,7 @@ export default defineComponent ({
   emits: ['filter'],
   methods: {
     filter(){
-      console.log("F1:", this.name," - ",this.check, this.checked, this.info)
+      console.log("Filter:", this.name," - ",this.check, this.checked, this.info)
       if (this.checked) {
         this.$emit("filter",true)
       } else {

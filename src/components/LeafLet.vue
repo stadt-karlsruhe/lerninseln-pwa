@@ -139,6 +139,7 @@ export default defineComponent ({
       if (!this.mapIsReady) return []
       const provId = this.ds.get("selectedProvider") || 0
       const catFilter = this.ds.get("filterCatId") || 0
+      console.log("LL: privid, filter",provId,catFilter)
       const m = []
       this.markers.forEach(marker => { 
         console.log("Marker:",marker,provId)
@@ -269,7 +270,7 @@ export default defineComponent ({
       this.ds = store
       console.log("LL store:",store)
     } catch (e) {
-        console.log("Store failed:",e.message)
+        console.log("LL Store failed:",e.message)
     }
 
     this.mapIsReady = true;

@@ -32,9 +32,13 @@
 <script lang="ts">
 import {IonCard, IonCardContent, IonCardHeader,IonCardSubtitle,
       IonGrid, IonRow, IonCol, IonSpinner } from '@ionic/vue';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 
 import FilterItem from '@/components/FilterItem.vue';
+
+// storage 
+import { Storage } from '@ionic/storage';
+
 
 import { 
   volumeMuteOutline,
@@ -81,26 +85,55 @@ export default defineComponent ({
       setTimeout(()=>{this.isLoading=false},2000)
     },
     async onFilter(x: number, y: boolean) {
-        console.log("Filter event: ",x,y,)
+        console.log("On Filter")
+        try {
+          var filter = await this.ds.get("filterCatId") || 0
+        } catch (e: any) {
+          console.log("SF - read store failed:",e.message)
+          // this is only when we start with the map ...
+          try {
+            const store = new Storage();
+            await store.create();
+            this.ds = store
+            console.log("New SF store:",store)
+          } catch (e: any) {
+              console.log("SF - Store failed:",e.message)
+          }
+
+        }
+        console.log("Filter event: ",x,y,filter)
         //"Store filter: ",this.store.state.filter.catId)
-        const filter = {catId:0} //this.store.state.filter
         if (y) {
           for (let i=0;i<this.check.length;i++){
             this.check[i] = (i == x)
+            console.log("Check on:",x)
           }
-          this.filterOff = false
-          filter.catId = x + 1 // categories run from 1
+          filter = x + 1 // categories run from 1
+          await this.ds.set("filterCatId",filter)
         } else {
           if (this.check[x]) {
-            filter.catId = 0
-            this.filterOff = true
+            filter = 0
+            console.log("Check off:",x)
+            await this.ds.set("filterCatId",filter)
           }
         }
         //console.log(this.check)
     },
+    async beforeMount() {
+      try {
+        const store = new Storage();
+        await store.create();
+        this.ds = store
+        console.log("SF store:",store)
+      } catch (e: any) {
+          console.log("SF - Store failed:",e.message)
+      }
+    }
   },
   setup() {
+    const ds = ref(Storage.prototype)
     return {
+      ds,
       volumeMuteOutline,
       //wifiOutline,
       medkitOutline,
