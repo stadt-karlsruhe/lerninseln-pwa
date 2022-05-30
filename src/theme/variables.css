@@ -1,23 +1,89 @@
 /* Ionic Variables and Theming. For more info, please see:
-http://ionicframework.com/docs/theming/ */
+http://ionicframework.com/docs/theming/ 
+and
+https://levelup.gitconnected.com/how-to-add-a-new-font-into-your-ionic-app-b7e0871ff5f4
+*/
+
+/* new font, example exo-2 from google 
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet"> 
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap');
+</style> 
+
+see https://forum.ionicframework.com/t/ionic-v4-how-i-import-new-fonts/139063/2
+
+*/
+
+@font-face {
+  font-family: 'Exo 2';
+  font-style: bold;
+  font-weight: 800;
+  src: url('../../public/assets/font/Exo2-SemiBold.ttf');
+}
+
+
+@font-face {
+  font-family: 'Exo 2';
+  font-style: boldItalic;
+  src: url('../../public/assets/font/Exo2-SemiBoldItalic.ttf');
+}
+
+@font-face {
+  font-family: 'Exo 2';
+  font-style: italic;
+  src: url('../../public/assets/font/Exo2-Italic.ttf');
+}
+
+
+@font-face {
+  font-family: 'Exo 2';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../../public/assets/font/Exo2-Regular.ttf');
+}
+
+
+* {
+  font-family: 'Exo 2', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+
+}
+
 
 /** Ionic CSS Variables **/
 :root {
   /** primary **/
+  /*
   --ion-color-primary: #3880ff;
   --ion-color-primary-rgb: 56, 128, 255;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
   --ion-color-primary-shade: #3171e0;
   --ion-color-primary-tint: #4c8dff;
+*/
 
-  /** secondary **/
+/** karlsruhe palette **/
+--ion-color-primary: #048500;
+--ion-color-primary-rgb: 4,133,0;
+--ion-color-primary-contrast: #ffffff;
+--ion-color-primary-contrast-rgb: 255, 255, 255;
+--ion-color-primary-shade: #037300;
+--ion-color-primary-tint: #05aa00;
+
+/** secondary **/
   --ion-color-secondary: #3dc2ff;
   --ion-color-secondary-rgb: 61, 194, 255;
   --ion-color-secondary-contrast: #ffffff;
   --ion-color-secondary-contrast-rgb: 255, 255, 255;
   --ion-color-secondary-shade: #36abe0;
   --ion-color-secondary-tint: #50c8ff;
+
+  --ka-text-color: #404040;
 
   /** tertiary **/
   --ion-color-tertiary: #5260ff;
@@ -83,13 +149,13 @@ http://ionicframework.com/docs/theming/ */
    */
 
   body {
-    --ion-color-primary: #428cff;
-    --ion-color-primary-rgb: 66,140,255;
+    --ion-color-primary: #048500;
+    --ion-color-primary-rgb: 4,133,0;
     --ion-color-primary-contrast: #ffffff;
-    --ion-color-primary-contrast-rgb: 255,255,255;
-    --ion-color-primary-shade: #3a7be0;
-    --ion-color-primary-tint: #5598ff;
-
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: #037300;
+    --ion-color-primary-tint: #05aa00;
+    
     --ion-color-secondary: #50c8ff;
     --ion-color-secondary-rgb: 80,200,255;
     --ion-color-secondary-contrast: #ffffff;
