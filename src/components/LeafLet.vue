@@ -55,7 +55,7 @@
 // Its CSS is needed though, if not imported elsewhere in your application.
 import "leaflet/dist/leaflet.css"
 import { LMap, LGeoJson,LMarker, LPopup, LTileLayer, LIcon,  } from "@vue-leaflet/vue-leaflet";
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, toRef } from 'vue';
 
 
 // https://github.com/leaflet-extras/leaflet-providers
@@ -73,20 +73,25 @@ import { Geolocation } from '@capacitor/geolocation';
 
 export default defineComponent ({
   name: "LeafLet",
+  props: ["reload"],
   watch: {
-  '$route' (to, from) {
-    //console.log('Rout update2',to,from);
-    if (to.path == "/map") {
-      console.log('Now on map');
-      this.updated++
-      //console.log("1\n",this.$refs.map)
-      //console.log("2\n",this.$refs.map.leafletObject)
-      const map = this.$refs.map.leafletObject
-      //this.$map.invalidateSize()
-      setTimeout(function(){ map._onResize(); }, 1000);
-     
+    rl(a,b) {
+      alert("Reload")
+      console.log("Reload",a,b)
+    },
+    '$route' (to, from) {
+      //console.log('Rout update2',to,from);
+      if (to.path == "/map") {
+        console.log('Now on map');
+        this.updated++
+        //console.log("1\n",this.$refs.map)
+        //console.log("2\n",this.$refs.map.leafletObject)
+        const map = this.$refs.map.leafletObject
+        //this.$map.invalidateSize()
+        setTimeout(function(){ map._onResize(); }, 1000);
+      
       }
-    }
+    },
   },
   components: {
     LMap,
@@ -137,9 +142,9 @@ export default defineComponent ({
     selIitems() {
       // https://v3.vuejs.org/guide/computed.html#computed-properties
       if (!this.mapIsReady) return []
-      const provId = this.ds.get("selectedProvider") || 0
-      const catFilter = this.ds.get("filterCatId") || 0
-      console.log("LL: privid, filter",provId,catFilter)
+      const provId = 3 // this.ds.get("selectedProvider") || 0
+      const filter = this.ds.get("filterCatId") || 0
+      console.log("LL: privid, filter",provId,filter)
       const m = []
       this.markers.forEach(marker => { 
         console.log("Marker:",marker,provId)
@@ -147,7 +152,7 @@ export default defineComponent ({
         if ((provId == 0) || (marker.id == provId)) {
           // filter by category ... doesn't work. we show providers in the map, 
           // but categories are tied to events
-          { //if ((catFilter == 0) || true) { //marker.category_id == catFilter)) 
+          { //if ((filter == 0) || true) { //marker.category_id == filter)) 
             m.push(marker)
           }
         }
@@ -275,12 +280,13 @@ export default defineComponent ({
 
     this.mapIsReady = true;
  
-    this.initialize();
+    await this.initialize();
   },
   // store
-  setup() {
+  setup(props) {
+    const rl = toRef(props, 'reload')
     const ds = ref(null)
-    return { ds };
+    return { ds, rl };
   },
 
 });

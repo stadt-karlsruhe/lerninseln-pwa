@@ -59,7 +59,7 @@ import { IonButton, IonCheckbox,IonThumbnail, IonText, IonItem, } from '@ionic/v
 // storage 
 import { Storage } from '@ionic/storage';
 
-import { defineComponent, ref } from 'vue'; 
+import { defineComponent, ref, toRef } from 'vue'; 
 import SingleEvent from '@/components/SingleEvent.vue';
 
 import router from "../router";
@@ -73,6 +73,13 @@ const dummyText = [
 export default defineComponent({
   name: "EventList",
   components: {SingleEvent, IonButton, IonCheckbox, IonThumbnail, IonText, IonItem,},
+  props: ["reload"],
+  watch: {
+    rl(a,b) {
+      alert("Reload")
+      console.log("Reload",a,b)
+    },
+  },
   data () {
     return {
     items : [],
@@ -204,10 +211,11 @@ export default defineComponent({
     },
   },
     // store
-  setup() {
+  setup(props) {
+    const rl = toRef(props, 'reload')
     const storeAvail = ref(false)
     const ds = ref(null)
-    return { cartOutline, ds };
+    return { cartOutline, ds, rl };
   },
 }
 ); 

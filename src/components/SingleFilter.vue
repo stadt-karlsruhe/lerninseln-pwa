@@ -32,7 +32,7 @@
 <script lang="ts">
 import {IonCard, IonCardContent, IonCardHeader,IonCardSubtitle,
       IonGrid, IonRow, IonCol, IonSpinner } from '@ionic/vue';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, toRef } from 'vue';
 
 import FilterItem from '@/components/FilterItem.vue';
 
@@ -66,6 +66,13 @@ export default defineComponent ({
   FilterItem,
   IonGrid, IonRow, IonCol,
   IonSpinner,
+  },
+  props: ["reload"],
+  watch: {
+    rl(a,b) {
+      alert("Reload")
+      console.log("Reload",a,b)
+    },
   },
   data () {
     return {
@@ -130,9 +137,11 @@ export default defineComponent ({
       }
     }
   },
-  setup() {
+  setup(props) {
+    const rl = toRef(props, 'reload')
     const ds = ref(Storage.prototype)
     return {
+      rl,
       ds,
       volumeMuteOutline,
       //wifiOutline,

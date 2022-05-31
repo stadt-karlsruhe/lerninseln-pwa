@@ -11,13 +11,6 @@
     <ion-content :fullscreen="true" >
     <div ref="tab1" class="swiping">
     
-     <ion-loading
-    :is-open="loading"
-    cssClass="loader-class"
-    message="Bitte warten..."
-    >
-    </ion-loading>
-
     <IntroText></IntroText>
     <!--    
     <LoginForm></LoginForm>
@@ -39,8 +32,6 @@
 <script lang="js">
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent,  } from '@ionic/vue';
 
-import { IonLoading } from '@ionic/vue';
-
 import { defineComponent, ref } from 'vue'; 
 
 //import ExploreContainer from '@/components/ExploreContainer.vue';
@@ -50,13 +41,8 @@ import IntroSlides from '@/components/IntroSlides.vue';
 import ProviderList from '@/components/ProviderList.vue';
 import ImPrint from '@/components/ImPrint.vue';
 
-import { Storage } from '@ionic/storage';
-
 import { createGesture } from '@ionic/vue';
 import router from "../router";
-
-import axios from 'axios';
-const getConfig = { headers: {'access-control-allow-origin': '*'}}
 
 
 export default  defineComponent ({
@@ -64,7 +50,6 @@ export default  defineComponent ({
   components: { //LoginForm, 
     IntroText, ProviderList, IonHeader, IonToolbar, IonTitle, 
     IonContent, IonPage, ImPrint, //IntroSlides,
-    IonLoading
   },
   data: function() {
     return {
@@ -82,65 +67,7 @@ export default  defineComponent ({
     },
   },
   async beforeMount() {
-    const dt = new Date()
-    const date = dt.toISOString().split("T")[0]
-    const tm = dt.toLocaleTimeString('de-DE')
-    const time = tm.split(":")[0] + ":" + tm.split(":")[1]
-    console.log("date: ",date, time)
-
-    try {
-      const store = new Storage();
-      await store.create();
-      this.ds = store
-    } catch (e) {
-        console.log("Store failed:",e.message)
-    }
-
-
-    this.loading = true
-    // load data
-    //const baseUrl = "https://lerninseln.karlsruhe.de/simpleSrv.php"
-    const baseUrl = "https://lerninseln.ok-lab-karlsruhe.de/simpleSrv.php"
-    //const baseUrl = "http://localhost:9000/simpleSrv.php"
-    const baseGetUrl = baseUrl + "?table=";
-
-    const tables = ["config","provider","event","ticket","feature","category","audience"]
-    for (const ti in tables) {
-      const t = tables[ti]
-      console.log("Get data for table ",t);
-      const url = baseGetUrl + t
-      try {
-          const r = await axios.get(url,getConfig)
-          console.log("Status",r.status)
-          if (r.status == 200) {
-            const result = await r.data.data
-            console.log("Data loaded",result)
-
-            if (t == "event") {
-              // filter only future events
-              const dt = new Date()
-              const date = dt.toISOString().split("T")[0]
-              //console.log("date: ",date)
-              // filter for new events
-              //const events = result.filter(e => e.date >= date)
-              const events = result.filter(e => e.date >= "2021-07-01")
-              await this.ds.set(t, JSON.stringify(events))
-            } else {
-              await this.ds.set(t, JSON.stringify(result))
-            }
-
-
-        } else {
-            console.log("failed")
-        }
-      } catch (e) {
-        console.log("Error:",e.message)
-        return
-      }
-    }
-
-    console.log("Loading complete")
-    this.loading = false
+    // moved to mapview
   },
   async mounted(){
     const gest = this.$refs.tab1 //ref();
@@ -155,10 +82,7 @@ export default  defineComponent ({
     gesture.enable();
   },
   setup() {
-    const loading = ref(true);
-    const df = ref(null)
-    const ds = ref(null)
-    return { df, loading };
+    return {  };
   }
 })
 
