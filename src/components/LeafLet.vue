@@ -29,7 +29,9 @@
   <l-marker v-for="item in selIitems" :key="item.id" :lat-lng="item.latlng"
       @l-add="$event.target.openPopup()"
   >
-      <l-popup :content="item.content">
+      <l-popup 
+        :content="item.content"
+      >
       </l-popup>
       <l-icon v-if="item.iconOptions.iconSize[0] != 0"
         :iconUrl="item.iconOptions.iconUrl"
@@ -50,6 +52,10 @@
 <script>
 
 // leaf2vue docs: https://vue2-leaflet.netlify.app/examples/feature-group.html
+
+// !!!! Issue with leaflet > 1.7.0:
+// closing popup with href=#close breaks vue router
+// !!!!
 
 // DON'T load Leaflet components here!
 // Its CSS is needed though, if not imported elsewhere in your application.
@@ -142,7 +148,7 @@ export default defineComponent ({
     selIitems() {
       // https://v3.vuejs.org/guide/computed.html#computed-properties
       if (!this.mapIsReady) return []
-      const provId = 3 // this.ds.get("selectedProvider") || 0
+      const provId = 0 // this.ds.get("selectedProvider") || 0
       const filter = this.ds.get("filterCatId") || 0
       console.log("LL: privid, filter",provId,filter)
       const m = []
@@ -187,14 +193,23 @@ export default defineComponent ({
       this.currentCenter = center;
     },
     async initialize() {
-      const geoLoc = await Geolocation.getCurrentPosition();
-      console.log('Current position:', geoLoc);
-      const pnt =  [geoLoc.coords.latitude,geoLoc.coords.longitude]
-      // update position in quickstore
-      //console.log(ll)
-      const content = '<div class="popInfo"><h3>Du bist hier!</h3></div>'
       const iconUrl = "/assets/img/map/bulb.png"
-      const iconSize = [48,48]
+      const iconSize = [48,48] 
+      let content, pnt
+      try {
+        const geoLoc = await Geolocation.getCurrentPosition();
+        console.log('Current position:', geoLoc);
+        pnt =  [geoLoc.coords.latitude,geoLoc.coords.longitude]
+        // update position in quickstore
+        //console.log(ll)
+        content = '<div class="popInfo"><h3>Du bist hier!</h3></div>'
+      } catch (e) {
+        console.log('Geoloc failed:', e.message);
+        pnt =  this.center //[geoLoc.coords.latitude,geoLoc.coords.longitude]
+        // update position in quickstore
+        //console.log(ll)
+        content = '<div class="popInfo"><h3>Position unbekannt!</h3></div>'
+      }
       const iconOptions = {"iconUrl":iconUrl,"iconSize":iconSize}
       this.markers.push({"id":0,"latlng":pnt,
       "content":content,
