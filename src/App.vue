@@ -6,14 +6,32 @@
 
 <script lang="ts">
 import { IonApp, IonRouterOutlet } from '@ionic/vue';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'App',
   components: {
     IonApp,
     IonRouterOutlet
-  }
+  },
+  // ---------------------
+  // add stuff for pwa installation
+  setup() {
+     const deferredPrompt:any = ref(null)
+     return {deferredPrompt}
+  },
+  created() {
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      this.deferredPrompt = e;
+      console.log("before install")
+    });window.addEventListener("appinstalled", () => {
+      this.deferredPrompt = null;
+      console.log("after install")
+    });
+  }, 
+  // ---------------------
 });
 </script>
 <style>
