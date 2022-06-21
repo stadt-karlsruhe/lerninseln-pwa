@@ -2,6 +2,7 @@ module.exports = {
     // ----- from ionic docs . OK ???
     chainWebpack: (config) => {
       config.plugins.delete('prefetch');
+      config.plugin('workbox') // for pwa. needed?
     },
     // ----------------------
     pwa: {
@@ -11,14 +12,23 @@ module.exports = {
       //appleMobileWebAppCapable: 'yes',
       //appleMobileWebAppStatusBarStyle: 'black',
       // detailed manifest options must go into manifestOptions!
+      // configure the workbox plugin
+      workboxPluginMode: "GenerateSW", //'InjectManifest',
+      workboxOptions: {
+        // swSrc is required in InjectManifest mode.
+        //swSrc: 'dev/sw.js',
+        // ...other Workbox options...
+      },
       manifestOptions:{
         short_name: 'LiPwa',
-        start_url: "/",
+        start_url: "/intro",
         display: "standalone",
-        background_color: "#ffffff",
-        msTileColor: '#000000',
+        background_color: "#eeeeee",
+        //msTileColor: '#000000',
+        msTileColor: '#eeeeee',
         appleMobileWebAppCapable: 'yes',
         appleMobileWebAppStatusBarStyle: 'black',
+        mobileWebAppCapable: 'yes',
           icons: [
           {
             "src": "/img/icons/android-chrome-192x192.png",

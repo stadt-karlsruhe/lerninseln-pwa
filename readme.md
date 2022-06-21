@@ -1,3 +1,8 @@
+webpack config/chain
+https://cli.vuejs.org/guide/webpack.html#chaining-advanced
+
+
+
 vue-pwa-asset-generator
 https://dev.to/jcalixte/vuejs-pwa-assets-generator-4jhn
 https://www.npmjs.com/package/vue-pwa-asset-generator
@@ -6,6 +11,19 @@ or maybe
 
 https://itnext.io/pwa-splash-screen-and-icon-generator-a74ebb8a130
 https://github.com/onderceylan/pwa-asset-generator
+
+
+serviceworker
+https://web.dev/new-pwa-training/
+https://web.dev/learn/pwa/workbox/
+https://developer.chrome.com/docs/workbox/reference/workbox-webpack-plugin/
+https://stackoverflow.com/questions/67375367/why-is-my-workbox-generatesw-showing-my-offline-page-while-connected
+
+pwa
+https://cli.vuejs.org/core-plugins/pwa.html
+https://web.dev/learn/pwa/
+https://github.com/GoogleChromeLabs/pwa-workshop-codelab
+
 
 
 pwa instllation, local storage and caching:
@@ -17,6 +35,13 @@ https://developers.google.com/web/fundamentals/codelabs/offline/
 https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
 https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Installable_PWAs
 https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Add_to_home_screen
+
+
+''' Chrome says:
+ map:1 <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes">
+
+index.js:25 after install
+'''
 
 
 pwa push + notification:
