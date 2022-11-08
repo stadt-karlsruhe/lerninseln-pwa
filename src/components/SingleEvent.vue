@@ -2,23 +2,14 @@
 
  <ion-item-group>
     <ion-item-divider>
-      <ion-label class="event"><h2>{{title}}, ID {{id}}</h2></ion-label>
     </ion-item-divider>
     <ion-item color="light" >
       <ion-icon :icon="getIcon()" slot="start" class="eventIcon"/>
-      <ion-label position="fixed" class="eventDate">
-      <div>{{date}}</div>
-      <div>{{time}}</div>
+      <ion-label position="inline" class="eventDate">
+        <span class="eventTitle">{{title}}</span>
+            <a class="eventMore"  :href="url" target="_blank">Mehr ...</a>
       </ion-label>
-      <div>
-      <ion-label class="eventMore" >
-      <a :href="url" target="_blank">Mehr ...</a>
-      </ion-label>
-      </div>
     </ion-item>
-    <ion-item-divider>
-      <ion-label  class="event"><p>{{text}}</p></ion-label>
-    </ion-item-divider>
  </ion-item-group>
 
 </template>
@@ -27,7 +18,20 @@
 import { IonItemGroup, IonIcon, IonItem, IonItemDivider, IonLabel,
   IonPopover,
  } from '@ionic/vue';
-import { volumeMuteOutline, medkitOutline, constructOutline, peopleOutline, helpOutline } from 'ionicons/icons';
+import {   
+  volumeMuteOutline,
+  medkitOutline,
+  constructOutline,
+  peopleOutline,
+  albumsOutline,
+  telescopeOutline,
+  wifiOutline,
+  desktopOutline,
+  contractOutline,
+  syncOutline,
+  trophyOutline,
+  rocketOutline,
+ } from 'ionicons/icons';
 
 import Popver from './popover.vue'
 
@@ -62,25 +66,32 @@ export default defineComponent({
       //console.log("Icon id:",parseInt(this.icon))
       switch (parseInt(this.icon)) {
         case 1:
-          return volumeMuteOutline;
+          return desktopOutline;
         case 2:
-          return medkitOutline;
-        case 3:
           return constructOutline;
+        case 3:
+          return peopleOutline;
         case 4:
-          return medkitOutline;
+          return rocketOutline;
         default:
-          return helpOutline;
+          return telescopeOutline;
       } 
     }
   },
   setup() {
     return {
-      volumeMuteOutline, 
-      constructOutline,
+      volumeMuteOutline,
       medkitOutline,
+      constructOutline,
       peopleOutline,
-      helpOutline,
+      albumsOutline,
+      telescopeOutline,
+      wifiOutline,
+      desktopOutline,
+      contractOutline,
+      syncOutline,
+      trophyOutline,
+      rocketOutline,
     }
   }
 });
@@ -113,11 +124,17 @@ h2 {
 
 .eventDate {
   text-align: left;
-  /* with position: fixed adjust size */
-  flex-basis: 110px;
+  /* with position: fixed adjust size *
+  flex-basis: 10px;
+  */
   margin-top: 0;
   margin-bottom: 0;
   color: #404040;
+}
+
+.eventTitle {
+  font-size: 120%;
+  margin-right: 1em;
 }
 
 .eventMore {

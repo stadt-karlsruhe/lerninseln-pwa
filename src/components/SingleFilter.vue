@@ -8,8 +8,8 @@
 
     <ion-grid>
       <ion-row>
-        <ion-col size="10">
-            <FilterItem v-for="n in 4" :key="n" 
+        <ion-col size="12">
+            <FilterItem v-for="n in labels.length" :key="n" 
               :name=labels[n-1]
               :icon=icons[n-1]
               :check=check[n-1]
@@ -17,10 +17,12 @@
               @filter="onFilter(n-1,$event)"
             />
         </ion-col>
+        <!--
         <ion-col size="2">
               <ion-spinner v-show="isLoading" class="spinner" ></ion-spinner>
               <ion-icon v-show="!isLoading" :icon="syncOutline" class="syncIcon" @click="sync"/>
         </ion-col>
+        -->
       </ion-row>
     </ion-grid>
 
@@ -31,33 +33,38 @@
 
 <script lang="ts">
 import {IonCard, IonCardContent, IonCardHeader,IonCardSubtitle,
-      IonGrid, IonRow, IonCol, IonSpinner } from '@ionic/vue';
+      IonGrid, IonRow, IonCol } from '@ionic/vue';
+//import { IonSpinner } from '@ionic/vue';
 import { defineComponent, ref, toRef } from 'vue';
 
 import FilterItem from '@/components/FilterItem.vue';
 
-// storage 
-import { Storage } from '@ionic/storage';
-
-
 import { 
   volumeMuteOutline,
-  //wifiOutline,
   medkitOutline,
   constructOutline,
   peopleOutline,
+  albumsOutline,
+  telescopeOutline,
+  wifiOutline,
+  desktopOutline,
+  contractOutline,
   syncOutline,
+  trophyOutline,
+  rocketOutline,
  } from 'ionicons/icons';
 
-const icons=[ volumeMuteOutline,
-  //wifiOutline,
-  medkitOutline,
+const icons=[ 
+  desktopOutline,
   constructOutline,
-  peopleOutline]
+  peopleOutline,
+  rocketOutline,
+  telescopeOutline
+  ]
 
-const labels = ["F1","F2","F3","F4"]
+const labels = ["F1","F2","F3","F4","F5"]
 const infos = [
-  "Ruhe","Unterstützung","Werkstatt","Gemeinschaft"
+  "Teilhabe","MINT","3. Orte","Beteiligung","Wissen"
   ]
 
 export default defineComponent ({
@@ -65,18 +72,18 @@ export default defineComponent ({
   components: { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, 
   FilterItem,
   IonGrid, IonRow, IonCol,
-  IonSpinner,
+  //IonSpinner,
   },
   props: ["reload"],
   watch: {
     rl(a,b) {
-      alert("Reload")
+      //alert("Reload")
       console.log("Reload",a,b)
     },
   },
   data () {
     return {
-      check: [false,false,false,false],
+      check: [false,false,false,false,false],
       update: 0,
       icons: icons,
       labels: labels,
@@ -89,66 +96,46 @@ export default defineComponent ({
     async sync() {
       console.log("Sync")
       this.isLoading = true
+      this.$emit("update")
       setTimeout(()=>{this.isLoading=false},2000)
     },
     async onFilter(x: number, y: boolean) {
-        console.log("On Filter")
-        try {
-          var filter = await this.ds.get("filterCatId") || 0
-        } catch (e: any) {
-          console.log("SF - read store failed:",e.message)
-          // this is only when we start with the map ...
-          try {
-            const store = new Storage();
-            await store.create();
-            this.ds = store
-            console.log("New SF store:",store)
-          } catch (e: any) {
-              console.log("SF - Store failed:",e.message)
-          }
-
-        }
-        console.log("Filter event: ",x,y,filter)
-        //"Store filter: ",this.store.state.filter.catId)
+        //console.log("On Filter")
+        //console.log("Filter event: ",x,y,this.filter)
         if (y) {
           for (let i=0;i<this.check.length;i++){
             this.check[i] = (i == x)
-            console.log("Check on:",x)
+            //console.log("Check on:",x)
           }
-          filter = x + 1 // categories run from 1
-          await this.ds.set("filterCatId",filter)
+          this.filter = x + 1 // categories run from 1
         } else {
           if (this.check[x]) {
-            filter = 0
-            console.log("Check off:",x)
-            await this.ds.set("filterCatId",filter)
+            this.filter = 0
+            //console.log("Check off:",x)
           }
         }
-        //console.log(this.check)
+        this.$emit("filter",this.filter) 
+
     },
-    async beforeMount() {
-      try {
-        const store = new Storage();
-        await store.create();
-        this.ds = store
-        console.log("SF store:",store)
-      } catch (e: any) {
-          console.log("SF - Store failed:",e.message)
-      }
-    }
   },
   setup(props) {
+    const filter = ref(0)
     const rl = toRef(props, 'reload')
-    const ds = ref(Storage.prototype)
     return {
+      filter,
       rl,
-      ds,
       volumeMuteOutline,
-      //wifiOutline,
       medkitOutline,
       constructOutline,
       peopleOutline,
+      albumsOutline,
+      telescopeOutline,
+      wifiOutline,
+      desktopOutline,
+      contractOutline,
       syncOutline,
+      trophyOutline,
+      rocketOutline,
     }
   },
 

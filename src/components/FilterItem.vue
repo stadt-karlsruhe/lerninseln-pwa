@@ -63,7 +63,7 @@ export default defineComponent ({
   emits: ['filter'],
   methods: {
     filter(){
-      console.log("Filter:", this.name," - ",this.check, this.checked, this.info)
+      //console.log("Filter:", this.name," - ",this.check, this.checked, this.info)
       if (this.checked) {
         this.$emit("filter",true)
       } else {
@@ -71,13 +71,17 @@ export default defineComponent ({
       }
     },
     async iconHelp(ev: Event) {
-      console.log("help")
+      console.log("help",ev)
       const popover = await popoverController
         .create({
+          event: ev,
+          reference:"trigger",
+          trigger:"top-center",
+          side:"top",
+          alignment:"center",
           component: FilterInfo,
           componentProps: {"info":this.info},
           cssClass: 'filterInfoClass',
-          event: ev,
           translucent: true
         })
       await popover.present();
@@ -145,5 +149,12 @@ ion-item {
 .in-item {
   margin-inline: 0;
 }
+
+</style>
+
+<style>
+ion-popover {
+    --offset-x: -120px;
+  }
 
 </style>

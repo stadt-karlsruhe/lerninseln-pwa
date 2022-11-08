@@ -53,6 +53,12 @@ import {
   peopleOutline,
   syncOutline,
   albumsOutline,
+  telescopeOutline,
+  wifiOutline,
+  desktopOutline,
+  contractOutline,
+  trophyOutline,
+  rocketOutline,
  } from 'ionicons/icons';
 
 import router from "../router";
@@ -70,7 +76,12 @@ export default defineComponent({
       constructOutline,
       peopleOutline,
       albumsOutline,
-
+      telescopeOutline,
+      wifiOutline,
+      desktopOutline,
+      contractOutline,
+      trophyOutline,
+      rocketOutline,
     }
   },
 
@@ -79,31 +90,37 @@ export default defineComponent({
     return {
       items: [{
       'hdr': 'Digitale Teilhabe',
-      'text': 'Hier finden Ihr freies WLAN und eine ruhige, geschütze Umgebung für eigenes Lernen.' ,
+      'text': 'Hier finden die Lernenden freies WLAN und ggf. bei Bedarf und Verfügbarkeit ExpertInnen, z.B. Studierende der Pädagogischen Hochschule in Karlsruhe, die den Lernenden bei technischen, aber auch fachlichen Fragen weiterhelfen.' ,
       "id":1,
       "alt":"alt",
-      "icon":this.volumeMuteOutline,
+      "icon":this.desktopOutline,
     }, 
-    {
-      'hdr': 'Unterstützung',
-      'text': 'Neben freiem Internetzugang findet Ihr hier ein offenes Ohr und Unterstützung beim eigenen Lernen',
+    { "hdr":"MINT-Spaces",
+      "text": "Sie beinhalten zahlreiche Karlsruher Initiativen und Aktivitäten, die im Rahmen von AGs an Schulen, aber auch außerhalb der Schulen stattfinden.",
       "id":2,
-      "alt":"alt",
-      "icon":this.medkitOutline,
-    }, 
-    {
-      'hdr': 'Workshops',
-      'text': 'Hier könnt Ihr an interessanten Angeboten zu verschiedenen Themen teilnehmen',
-      "id":3,
       "alt":"alt",
       "icon":this.constructOutline,
     },
     {
-      'hdr': 'Beteiligungsorte',
+      'hdr': 'Digitale Dritte Orte',
       'text': 'An diesen Orten kann offen und partizipativ, auch in Gruppen, gelernt werden. Eigene Initiativen sind möglich.',
       "id":3,
       "alt":"alt",
       "icon":this.peopleOutline,
+    },
+    {
+      'hdr': 'Beteiligungsorte + MINT-Ausstellungsräume',
+      'text': 'Orte, an denen Einzelaktionen (Hackathons, Kunstaktionen, Fischertechnik-Challenges usw.) stattfinden.',
+      "id":4,
+      "alt":"alt",
+      "icon":this.rocketOutline,
+    }, 
+    {
+      'hdr': 'Wissensräume',
+      'text': 'Orte an denen IT- und MINT-Wissenstransfers stattfinden oder an denen sich Role Models vorstellen.',
+      "id":5,
+      "alt":"alt",
+      "icon":this.telescopeOutline,
     },
     ],
     }

@@ -82,7 +82,7 @@ export default defineComponent ({
   props: ["reload"],
   watch: {
     rl(a,b) {
-      alert("Reload")
+      //alert("Reload")
       console.log("Reload",a,b)
     },
     '$route' (to, from) {

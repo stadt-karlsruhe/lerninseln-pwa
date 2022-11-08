@@ -20,8 +20,6 @@
       >
       </ion-loading>
 
-      <IonButton @click="rl()">RL</IonButton>
-
       <LeafLet v-if="!loading"
         :reload="reload"
       ></LeafLet>
@@ -38,6 +36,8 @@
       <ion-card-content>
         <SingleFilter  v-if="!loading"
           :reload="reload"
+          @update="rl"
+          @filter="filter"
         />
       </ion-card-content>
       </ion-card >
@@ -48,9 +48,10 @@
 
       <EventList v-if="!loading"
           :reload="reload"
+          :events="events"
       ></EventList>
       <!--
-      <div v-for="item in items"  :key="item.id" class="listItem">
+      <div v-for="item in events"  :key="item.id" class="listItem">
             {{item.title}}
             <Event 
               :date=item.date 
@@ -71,7 +72,6 @@
 </template>
 
 <script lang="js">
-import { IonButton } from '@ionic/vue';
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardContent } from '@ionic/vue';
 import LeafLet from "@/components/LeafLet.vue";
 //import Events from '@/components/Events.vue';
@@ -97,12 +97,78 @@ export default defineComponent( {
   name: 'MapView',
   components: {  IonContent, IonCard, IonCardContent, 
   IonPage, LeafLet ,EventList, SingleFilter,
-  IonLoading,IonButton
+  IonLoading,
   },
   methods : {
-    rl(){
+    filter(f){
+      console.log("MAP filter",f)
+      if (f > 0) {
+        this.events = this.eventList.filter(e => e.category_id == f)
+      }
+      else {
+        this.events = this.eventList
+      }
+    },
+    async rl(){
       console.log("RL")
+      this.reload = true // prop to components
+      // load data
+      //const baseUrl = "https://lerninseln.karlsruhe.de/simpleSrv.php"
+      const baseUrl = "https://lerninseln.ok-lab-karlsruhe.de/simpleSrv.php"
+      //const baseUrl = "http://localhost:9000/simpleSrv.php"
+      const baseGetUrl = baseUrl + "?table=";
+
+      let status = true
+      const tables = ["config","provider","event","ticket","feature","category","audience"]
+      for (const ti in tables) {
+        const t = tables[ti]
+        console.log("Get data for table ",t);
+        const url = baseGetUrl + t
+        try {
+            const r = await axios.get(url,getConfig)
+            console.log("Status",r.status)
+            if (r.status == 200) {
+              const result = await r.data.data
+              console.log(t, " data loaded",result)
+
+              if (t == "event") {
+                // filter only future events
+                const dt = new Date()
+                const date = dt.toISOString().split("T")[0]
+                //console.log("date: ",date)
+                // filter for new events
+                //const events = result.filter(e => e.date >= date)
+                const events = result.filter(e => e.date >= "2021-07-01")
+                events.forEach(item => {
+                    item.icon="https://lerninseln.com/wp-content/uploads/2021/07/cropped-Lerninseln-Logo-Icon-192x192.png"
+                    item.txt = "Orte der (digitalen) Teilhabe \
+                      Hier finden die Lernenden freies WLAN und ggf. \
+                      bei Bedarf und Verfügbarkeit ExpertInnen, \
+                      weiterhelfen können."
+                  } 
+                )
+                await this.ds.set(t, JSON.stringify(events))
+                this.eventList = events
+                this.events = events
+              } else {
+                await this.ds.set(t, JSON.stringify(result))
+              }
+
+
+            } else {
+              console.log("failed")
+              status = false
+            }
+
+        } catch (e) {
+          console.log("Error:",e.message)
+          status = false
+        }
+      }
       this.reload++
+      this.reload = false // prop to components
+      return status
+
     },
     onSwipe(detail) {
       const type = detail.type;
@@ -130,50 +196,10 @@ export default defineComponent( {
         console.log("Store failed:",e.message)
     }
 
-    // load data
-    //const baseUrl = "https://lerninseln.karlsruhe.de/simpleSrv.php"
-    const baseUrl = "https://lerninseln.ok-lab-karlsruhe.de/simpleSrv.php"
-    //const baseUrl = "http://localhost:9000/simpleSrv.php"
-    const baseGetUrl = baseUrl + "?table=";
-
-    const tables = ["config","provider","event","ticket","feature","category","audience"]
-    for (const ti in tables) {
-      const t = tables[ti]
-      console.log("Get data for table ",t);
-      const url = baseGetUrl + t
-      try {
-          const r = await axios.get(url,getConfig)
-          console.log("Status",r.status)
-          if (r.status == 200) {
-            const result = await r.data.data
-            console.log(t, " data loaded",result)
-
-            if (t == "event") {
-              // filter only future events
-              const dt = new Date()
-              const date = dt.toISOString().split("T")[0]
-              //console.log("date: ",date)
-              // filter for new events
-              //const events = result.filter(e => e.date >= date)
-              const events = result.filter(e => e.date >= "2021-07-01")
-              await this.ds.set(t, JSON.stringify(events))
-            } else {
-              await this.ds.set(t, JSON.stringify(result))
-            }
-
-
-          } else {
-            console.log("failed")
-          }
-
-      } catch (e) {
-        console.log("Error:",e.message)
-        return
-      }
-    }
+    const status = await this.rl()
 
     console.log("Loading complete")
-    this.loading = false
+    this.loading = ! status //false
     
   },
   async mounted(){
@@ -189,10 +215,12 @@ export default defineComponent( {
     gesture.enable();
   },
   setup() {
+    const events = ref([])
+    const eventList = ref([])
     const reload = ref(0);
     const loading = ref(true);
     const ds = ref(Storage.prototype)
-    return { ds, loading, reload };
+    return { ds, loading, reload, eventList, events };
   },
 })
 </script>

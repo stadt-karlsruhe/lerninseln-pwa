@@ -15,23 +15,16 @@
   </div>
 
   </div>
-  <div v-for="item in selIitems"  :key="item.id" class="listItem">
+  <div v-for="item in events"  :key="item.id" class="listItem">
           <SingleEvent class="eventItem" 
           :date=item.date 
           :time=item.time 
-          :title=item.title 
+          :title="item.title"
           :text=item.provider 
           :id=item.id  
           :icon=item.category_id
           :url=item.url 
           ></SingleEvent>
-
-          <ion-checkbox class="eventCheck" 
-            @ionChange="select(item.id)"
-            @update:modelValue="item.checked = $event"
-            :modelValue="item.checked"
-          ></ion-checkbox>
-
 
           <ion-item>
             <ion-thumbnail 
@@ -54,7 +47,7 @@ import {
   cartOutline,
  } from 'ionicons/icons';
 
-import { IonButton, IonCheckbox,IonThumbnail, IonText, IonItem, } from '@ionic/vue';
+import { IonButton, IonThumbnail, IonText, IonItem, } from '@ionic/vue';
 
 // storage 
 import { Storage } from '@ionic/storage';
@@ -72,11 +65,11 @@ const dummyText = [
 
 export default defineComponent({
   name: "EventList",
-  components: {SingleEvent, IonButton, IonCheckbox, IonThumbnail, IonText, IonItem,},
-  props: ["reload"],
+  components: {SingleEvent, IonButton, IonThumbnail, IonText, IonItem,},
+  props: ["reload","events"],
   watch: {
     rl(a,b) {
-      alert("Reload")
+      //alert("Reload")
       console.log("Reload",a,b)
     },
   },
