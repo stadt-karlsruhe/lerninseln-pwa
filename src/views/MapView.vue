@@ -22,6 +22,8 @@
 
       <LeafLet v-if="!loading"
         :reload="reload"
+        :locations="locations"
+        :update="updated"
       ></LeafLet>
 
       </ion-card-content>
@@ -50,19 +52,7 @@
           :reload="reload"
           :events="events"
       ></EventList>
-      <!--
-      <div v-for="item in events"  :key="item.id" class="listItem">
-            {{item.title}}
-            <Event 
-              :date=item.date 
-              :time=item.time 
-              :title=item.title 
-              :text="item.text" 
-              :id=item.id 
-              @click="open(item.id)"
-              ></Event>
-      </div>
-      -->
+
       </ion-card-content>
       </ion-card>
 
@@ -100,75 +90,89 @@ export default defineComponent( {
   IonLoading,
   },
   methods : {
-    filter(f){
+    async filter(f){
       console.log("MAP filter",f)
       if (f > 0) {
         this.events = this.eventList.filter(e => e.category_id == f)
+        const locString = await this.ds.get("locations") || "[]"
+        this.locations = JSON.parse(locString).filter(e => e.Kategorie == f)
+        console.log("Filtered:",this.locations)
       }
       else {
         this.events = this.eventList
+        const locString = await this.ds.get("locations") || "[]"
+        this.locations = JSON.parse(locString)
+        console.log("All:",this.locations)
       }
+      this.updated++
+      console.log("map updated",this.updated)
+    },
+    insertEvents(locs) {
+      const events = []//new Array()
+      locs.forEach((item,i) => {
+          item.id = i + 1
+          item.latlng = [item.Lat,item.Lon]
+          console.log("URL:",item.URL)
+          if (item.Icon == "") item.Icon = "/assets/icon/icon.png"
+          //item.iconOptions = {"iconUrl":"https://placekitten.com/50/100","iconSize":[48,48]}
+          item.iconOptions = {"iconUrl":item.Icon,"iconSize":[32,32]}
+          const event = {"id":item.id,
+            "title":item.Titel,
+            "url":item.URL,
+            "category_id":item.Kategorie,
+            "txt":item.Preview,
+            "icon":item.Icon
+          }
+          events.push(event)
+        }
+      )
+      return events
     },
     async rl(){
       console.log("RL")
+      let status = true
       this.reload = true // prop to components
       // load data
-      //const baseUrl = "https://lerninseln.karlsruhe.de/simpleSrv.php"
-      const baseUrl = "https://lerninseln.ok-lab-karlsruhe.de/simpleSrv.php"
-      //const baseUrl = "http://localhost:9000/simpleSrv.php"
-      const baseGetUrl = baseUrl + "?table=";
+      //const baseUrl = "http://localhost:9000/getProviders.php"
+      const baseUrl = "/getProviders.php"
+      try {
+          const r = await axios.get(baseUrl,getConfig)
+          console.log("Status",r.status)
+          if ((r.status == 200) && (!r.data.startsWith("<?"))) {
+            const locations = r.data
+            console.log("Locations1:",locations, r.data)
 
-      let status = true
-      const tables = ["config","provider","event","ticket","feature","category","audience"]
-      for (const ti in tables) {
-        const t = tables[ti]
-        console.log("Get data for table ",t);
-        const url = baseGetUrl + t
-        try {
-            const r = await axios.get(url,getConfig)
-            console.log("Status",r.status)
-            if (r.status == 200) {
-              const result = await r.data.data
-              console.log(t, " data loaded",result)
+            const events = this.insertEvents(locations)
+            console.log("Locations loaded:",locations)
+            const dt = new Date()
+            const date = dt.toISOString().split("T")[0]
+            await this.ds.set("date", date)
+            await this.ds.set("locations", JSON.stringify(locations))
+            await this.ds.set("events", JSON.stringify(events))
+          } else {
+            console.log("Fetch failed, status: ",r.status)
+            status = false
+          }
 
-              if (t == "event") {
-                // filter only future events
-                const dt = new Date()
-                const date = dt.toISOString().split("T")[0]
-                //console.log("date: ",date)
-                // filter for new events
-                //const events = result.filter(e => e.date >= date)
-                const events = result.filter(e => e.date >= "2021-07-01")
-                events.forEach(item => {
-                    item.icon="https://lerninseln.com/wp-content/uploads/2021/07/cropped-Lerninseln-Logo-Icon-192x192.png"
-                    item.txt = "Orte der (digitalen) Teilhabe \
-                      Hier finden die Lernenden freies WLAN und ggf. \
-                      bei Bedarf und Verfügbarkeit ExpertInnen, \
-                      weiterhelfen können."
-                  } 
-                )
-                await this.ds.set(t, JSON.stringify(events))
-                this.eventList = events
-                this.events = events
-              } else {
-                await this.ds.set(t, JSON.stringify(result))
-              }
-
-
-            } else {
-              console.log("failed")
-              status = false
-            }
-
-        } catch (e) {
-          console.log("Error:",e.message)
-          status = false
-        }
+      } catch (e) {
+        console.log("Error:",e.message)
+        status = false
       }
-      this.reload++
+      // read from storage (always)
+      try {
+          const locationString = await this.ds.get("locations") || "[]"
+          this.locations = JSON.parse(locationString)
+          const eventString = await this.ds.get("events") || "[]"
+          this.eventList = JSON.parse(eventString)
+          this.events = this.eventList
+          status = true
+          console.log("Loaded from store",this.locations,this.events)
+      } catch (e) {
+        console.log("Loading from store failed:",e.message)
+      }
+
       this.reload = false // prop to components
       return status
-
     },
     onSwipe(detail) {
       const type = detail.type;
@@ -177,7 +181,6 @@ export default defineComponent( {
       const vx = detail.velocityX;
       //console.log(type,cx,dx,vx)
       if ((type == "pan") && (dx > 100) && (vx > 1)) router.push("/intro")
-      if ((type == "pan") && (dx < -100) && (vx < -1)) router.push("/shop")
     }
   },
   async beforeMount() {
@@ -191,7 +194,11 @@ export default defineComponent( {
       const store = new Storage();
       await store.create();
       this.ds = store
-      this.ds.set("loadDate",date)
+      if (this.resetStorage) {
+        alert("Storeage cleared")
+        await this.ds.clear()
+      }
+      await this.ds.set("loadDate",date)
     } catch (e) {
         console.log("Store failed:",e.message)
     }
@@ -218,9 +225,11 @@ export default defineComponent( {
     const events = ref([])
     const eventList = ref([])
     const reload = ref(0);
+    const updated = ref(0);
     const loading = ref(true);
+    const resetStorage = ref(false); // option to clear previous data
     const ds = ref(Storage.prototype)
-    return { ds, loading, reload, eventList, events };
+    return { ds, loading, reload, updated, resetStorage, eventList, events };
   },
 })
 </script>

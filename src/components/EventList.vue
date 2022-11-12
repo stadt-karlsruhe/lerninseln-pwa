@@ -1,27 +1,9 @@
 <template>
 
-  <div>
-  <ion-button 
-    v-if="hasEvent" 
-    @click="buy()"
-    >Zur Buchung
-  </ion-button>
-  <div class="navigate" v-if="hasEvent">
-  <ion-button
-    :href=osmUrl
-    target="_blank"
-    >Hinkommen
-  </ion-button>
-  </div>
-
-  </div>
   <div v-for="item in events"  :key="item.id" class="listItem">
           <SingleEvent class="eventItem" 
-          :date=item.date 
-          :time=item.time 
           :title="item.title"
           :text=item.provider 
-          :id=item.id  
           :icon=item.category_id
           :url=item.url 
           ></SingleEvent>
@@ -43,16 +25,11 @@
 
 <script> 
 
-import { 
-  cartOutline,
- } from 'ionicons/icons';
+import { IonThumbnail, IonText, IonItem, } from '@ionic/vue';
 
-import { IonButton, IonThumbnail, IonText, IonItem, } from '@ionic/vue';
-
-// storage 
-import { Storage } from '@ionic/storage';
 
 import { defineComponent, ref, toRef } from 'vue'; 
+
 import SingleEvent from '@/components/SingleEvent.vue';
 
 import router from "../router";
@@ -65,7 +42,7 @@ const dummyText = [
 
 export default defineComponent({
   name: "EventList",
-  components: {SingleEvent, IonButton, IonThumbnail, IonText, IonItem,},
+  components: {SingleEvent, IonThumbnail, IonText, IonItem,},
   props: ["reload","events"],
   watch: {
     rl(a,b) {
@@ -86,9 +63,6 @@ export default defineComponent({
     }
   },
   methods:{
-    buy() {
-      router.push("/shop")
-    },
     async select(e) {
       const item = this.items.find(i => (i.id == e))
       // for button:
@@ -119,43 +93,6 @@ export default defineComponent({
         this.osmUrl = "/map"
       }
     },
-  },
-  async beforeMount() {
-    try {
-      const store = new Storage();
-      await store.create();
-      this.ds = store
-      console.log("LL store:",store)
-    } catch (e) {
-        console.log("Store failed:",e.message)
-        return
-    }
-
-    const providerString = await this.ds.get("provider") || "[]"
-    // we need providers later on
-    this.providers = JSON.parse(providerString)
-    const ticketString = await this.ds.get("ticket") || "[]"
-    const tickets = JSON.parse(ticketString)
-    const itemString = await this.ds.get("event") || "[]"
-    const items = JSON.parse(itemString)
-    const validItems = []
-    for (let i=0; i < items.length; i++){
-      // cechk if we have any tickets on this event
-      const tick = tickets.find(t => t.event_id == items[i].id) || 0
-      console.log("Tick: ",tick)
-      if (tick == 0) continue
-      const pid = items[i].provider_id
-      const name = (this.providers.find(p => p.id == pid)).name
-      //console.log("i: ",i,", id: ",id, ", name: ",name)
-      items[i].provider = name
-      items[i].checked = 0
-      validItems.push(items[i])
-    }
-    this.items = validItems
-    this.storeAvail = true
-
-    
-    //console.log("befMount: ",items,validItems)
   },
   computed: {
     selIitems() {
@@ -198,17 +135,12 @@ export default defineComponent({
         */
       return i
     },
-    hasEvent() {
-      if (!this.storeAvail) return false
-      return (this.ds.get("selectedEeventId") != 0)
-    },
   },
     // store
   setup(props) {
     const rl = toRef(props, 'reload')
-    const storeAvail = ref(false)
-    const ds = ref(null)
-    return { cartOutline, ds, rl };
+    const upd = toRef(props, 'update')
+    return {  rl, upd };
   },
 }
 ); 
@@ -264,7 +196,7 @@ input.eventCheck  {
 }
 
 .previewText {
-  max-height: 4rem;
+  max-height: unset; /*12rem;*/
   white-space: normal; 
   overflow: hidden;
   /* ellispis only with nowrap which gives only 1 line */

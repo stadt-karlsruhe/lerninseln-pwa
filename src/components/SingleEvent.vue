@@ -7,7 +7,7 @@
       <ion-icon :icon="getIcon()" slot="start" class="eventIcon"/>
       <ion-label position="inline" class="eventDate">
         <span class="eventTitle">{{title}}</span>
-            <a class="eventMore"  :href="url" target="_blank">Mehr ...</a>
+            <a class="eventMore"  :href="url" target="_blank">Zum Angebot</a>
       </ion-label>
     </ion-item>
  </ion-item-group>
@@ -135,12 +135,13 @@ h2 {
 .eventTitle {
   font-size: 120%;
   margin-right: 1em;
+  white-space: normal;
 }
 
 .eventMore {
   text-align: left;
   /* with position: fixed adjust size */
-  display: inline-block;
+  display: block;
   text-decoration-line: underline;
   text-decoration-color: primary;
   color: primary;
