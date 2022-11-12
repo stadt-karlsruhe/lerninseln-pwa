@@ -2,7 +2,7 @@ module.exports = {
     // ----- from ionic docs . OK ???
     chainWebpack: (config) => {
       config.plugins.delete('prefetch');
-      config.plugin('workbox') // for pwa. needed?
+      //config.plugin('workbox') // for pwa. needed?
     },
     // ----------------------
     pwa: {
