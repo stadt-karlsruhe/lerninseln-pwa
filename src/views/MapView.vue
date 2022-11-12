@@ -138,7 +138,8 @@ export default defineComponent( {
       try {
           const r = await axios.get(baseUrl,getConfig)
           console.log("Status",r.status)
-          if ((r.status == 200) && (!r.data.startsWith("<?"))) {
+          if ((r.status == 200) && (r.data) && ((typeof r.data) == "object" ))  { //startsWith("<?"))) {
+            console.log("data:",typeof r.data)
             const locations = r.data
             console.log("Locations1:",locations, r.data)
 
