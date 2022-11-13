@@ -65,10 +65,17 @@ export default {
     async refresh() {
       //alert("refresh")
       this.refreshing = true
-      //this.pwaStat = "Refreshing"
+      this.pwaStat = "refreshing"
       this.emitter.emit("refresh")
-      setTimeout(this.refreshCompleted,2000)
-    }
+      // reset after status update
+      // setTimeout(this.refreshCompleted,2000)
+    },
+    statUpdate(stat) {
+      //this.refreshing = false
+      // allow some spinning time
+      setTimeout(this.refreshCompleted,1000)
+      this.pwaStat = stat
+    },
   },
   inject: {
     emitter: {
@@ -77,7 +84,7 @@ export default {
   },
   mounted(){
     // set emitter target
-    this.emitter.on("info",e => {this.pwaStat = e}) 
+    this.emitter.on("info",e => this.statUpdate(e)) 
   },
   setup() {
     const refreshing = ref(false)

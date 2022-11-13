@@ -157,12 +157,13 @@ export default defineComponent( {
             this.emitter.emit("info","fetched")
           } else {
             console.log("Fetch failed, status: ",r.status)
-            this.emitter.emit("info","fetch error")
+            this.emitter.emit("info","ferror1")
             status = false
           }
 
       } catch (e) {
         console.log("Error:",e.message)
+        this.emitter.emit("info","ferror2")
         status = false
       }
       // read from storage (always)
