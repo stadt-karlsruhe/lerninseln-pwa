@@ -25,7 +25,7 @@
         </ion-tab-button>
 
         <ion-item>
-          <ion-checkbox v-model="tglState" slot="start" @click="toggle"></ion-checkbox>
+          <ion-checkbox v-model="tglState" slot="start" @ionChange="toggle"></ion-checkbox>
         </ion-item>
 
       </ion-tab-bar>
@@ -87,9 +87,9 @@ export default {
       this.pwaStat = stat
     },
     toggle(){
-      console.log("toggle:",this.tglState) 
+      console.log("toggle changed to:",this.tglState) 
       //this.checkToggle(!ev.checked)
-      this.checkToggle(!this.tglState)
+      this.checkToggle(this.tglState)
     },
     checkToggle(shouldCheck) {
       console.log("check:",shouldCheck)
@@ -135,7 +135,6 @@ export default {
 
 
 /* tab button color from app.vue */
-
 .ka-tabs {
   background-color: #048500;
 }
