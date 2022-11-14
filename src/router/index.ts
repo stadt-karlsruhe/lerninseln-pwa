@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import PickUp from '../views/PickUp.vue'
+import IntroView from '../views/IntroView.vue'
+import MapView from '../views/MapView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -17,13 +19,12 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'intro',
-        component: () => 
-          import('@/views/IntroView.vue')
+        component: IntroView
         
       },
       {
         path: 'map',
-        component: () => import('@/views/MapView.vue')
+        component: MapView
       },
     ]
   }

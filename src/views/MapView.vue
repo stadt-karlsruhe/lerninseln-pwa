@@ -82,6 +82,8 @@ const getConfig = { headers: {'access-control-allow-origin': '*'}}
 
 import { Storage } from '@ionic/storage';
 
+// global event handling
+import { inject } from 'vue'
 
 export default defineComponent( {
   name: 'MapView',
@@ -97,12 +99,14 @@ export default defineComponent( {
         const locString = await this.ds.get("locations") || "[]"
         this.locations = JSON.parse(locString).filter(e => e.Kategorie == f)
         console.log("Filtered:",this.locations)
+        //this.emitter.emit("info","filtered")
       }
       else {
         this.events = this.eventList
         const locString = await this.ds.get("locations") || "[]"
         this.locations = JSON.parse(locString)
         console.log("All:",this.locations)
+        //this.emitter.emit("info","unfiltered")
       }
       this.updated++
       console.log("map updated",this.updated)
@@ -138,7 +142,8 @@ export default defineComponent( {
       try {
           const r = await axios.get(baseUrl,getConfig)
           console.log("Status",r.status)
-          if ((r.status == 200) && (!r.data.startsWith("<?"))) {
+          if ((r.status == 200) && (r.data) && ((typeof r.data) == "object" ))  { //startsWith("<?"))) {
+            console.log("data:",typeof r.data)
             const locations = r.data
             console.log("Locations1:",locations, r.data)
 
@@ -149,13 +154,16 @@ export default defineComponent( {
             await this.ds.set("date", date)
             await this.ds.set("locations", JSON.stringify(locations))
             await this.ds.set("events", JSON.stringify(events))
+            this.emitter.emit("info","fetched")
           } else {
             console.log("Fetch failed, status: ",r.status)
+            this.emitter.emit("info","ferror1")
             status = false
           }
 
       } catch (e) {
         console.log("Error:",e.message)
+        this.emitter.emit("info","ferror2")
         status = false
       }
       // read from storage (always)
@@ -181,6 +189,7 @@ export default defineComponent( {
       const vx = detail.velocityX;
       //console.log(type,cx,dx,vx)
       if ((type == "pan") && (dx > 100) && (vx > 1)) router.push("/intro")
+      if ((type == "pan") && (dx > 100) && (vx < 1)) this.emitter.emit("info",{"map":"pan"})
     }
   },
   async beforeMount() {
@@ -210,6 +219,11 @@ export default defineComponent( {
     
   },
   async mounted(){
+    // set emitter target for refresh
+    this.emitter.on("refresh",e => {
+      //alert("refresh")
+      this.rl()
+      }) 
     const gest = this.$refs.tab2 //ref();
     const r = router.currentRoute.value.path // value is important!
     //console.log("Current: ",r,"ref2:",gest)
@@ -221,6 +235,11 @@ export default defineComponent( {
     })
     gesture.enable();
   },
+  inject: {
+    emitter: {
+      from: 'emitter'
+    }
+  },
   setup() {
     const events = ref([])
     const eventList = ref([])
@@ -229,7 +248,7 @@ export default defineComponent( {
     const loading = ref(true);
     const resetStorage = ref(false); // option to clear previous data
     const ds = ref(Storage.prototype)
-    return { ds, loading, reload, updated, resetStorage, eventList, events };
+    return { ds, loading, reload, updated, resetStorage, eventList, events,  };
   },
 })
 </script>

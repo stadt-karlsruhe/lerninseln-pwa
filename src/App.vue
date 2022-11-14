@@ -1,12 +1,27 @@
 <template>
   <ion-app>
-    <ion-router-outlet />
+    <ion-router-outlet/>
   </ion-app>
 </template>
 
 <script lang="ts">
 import { IonApp, IonRouterOutlet } from '@ionic/vue';
 import { defineComponent, ref } from 'vue';
+
+// global event handling
+import mitt, { Emitter }  from 'mitt'
+import { provide } from 'vue'
+
+type Events = {
+  info: string,
+  refresh: null
+}
+/*
+const showInfo = function(i:string){
+  console.log("App info:",i)
+  alert("App Info " + i)
+}
+*/
 
 export default defineComponent({
   name: 'App',
@@ -17,8 +32,12 @@ export default defineComponent({
   // ---------------------
   // add stuff for pwa installation
   setup() {
-     const deferredPrompt:any = ref(null)
-     return {deferredPrompt}
+    const emitter: Emitter<Events> = mitt<Events>()
+    //emitter.on("info", e => showInfo(e))
+    provide("emitter",emitter)
+
+    const deferredPrompt:any = ref(null)
+    return {deferredPrompt}
   },
   created() {
     window.addEventListener("beforeinstallprompt", e => {
@@ -26,9 +45,11 @@ export default defineComponent({
       // Stash the event so it can be triggered later.
       this.deferredPrompt = e;
       console.log("before install")
+      alert("before install")
     });window.addEventListener("appinstalled", () => {
       this.deferredPrompt = null;
       console.log("after install")
+      alert("after install")
     });
   }, 
   // ---------------------

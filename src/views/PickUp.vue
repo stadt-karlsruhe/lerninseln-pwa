@@ -3,6 +3,7 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom" class="ka-tabs">
+
         <ion-tab-button tab="intro" href="/intro" class="ka-tab-btn">
           <ion-icon :icon="homeOutline" />
           <ion-label>Intro</ion-label>
@@ -12,7 +13,16 @@
           <ion-icon :icon="albumsOutline" />
           <ion-label>Angebote</ion-label>
         </ion-tab-button>
-        
+
+        <ion-tab-button class="ka-tab-btn" @click="refresh">
+          <ion-spinner v-if="refreshing" name="lines-small"></ion-spinner>
+          <ion-icon v-else :icon="refreshOutline" />
+          <ion-label>Refresh</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button class="ka-tab-btn" >
+          <ion-label>{{ pwaStat }} </ion-label>
+        </ion-tab-button>
        
       </ion-tab-bar>
     </ion-tabs>
@@ -21,6 +31,14 @@
 
 <script >
 import { IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage } from '@ionic/vue';
+import { IonSpinner } from '@ionic/vue';
+import { ref } from "vue"
+
+import { 
+  refreshOutline,
+ } from 'ionicons/icons';
+
+
 import { 
   homeOutline, 
   albumsOutline,
@@ -30,10 +48,47 @@ import {
   qrCodeOutline,
  } from 'ionicons/icons';
 
+// global event handling
+import { inject } from 'vue'
+
+
 export default {
   name: 'PickUp',
-  components: { IonLabel, IonRouterOutlet, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage },
+  components: { 
+    IonLabel, IonRouterOutlet, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage,
+    IonSpinner,
+  },
+  methods: {
+    refreshCompleted() {
+      this.refreshing = false
+    },
+    async refresh() {
+      //alert("refresh")
+      this.refreshing = true
+      this.pwaStat = "refreshing"
+      this.emitter.emit("refresh")
+      // reset after status update
+      // setTimeout(this.refreshCompleted,2000)
+    },
+    statUpdate(stat) {
+      //this.refreshing = false
+      // allow some spinning time
+      setTimeout(this.refreshCompleted,1000)
+      this.pwaStat = stat
+    },
+  },
+  inject: {
+    emitter: {
+      from: 'emitter'
+    }
+  },
+  mounted(){
+    // set emitter target
+    this.emitter.on("info",e => this.statUpdate(e)) 
+  },
   setup() {
+    const refreshing = ref(false)
+    const pwaStat = ref("Ready")
     return {
       homeOutline, 
       albumsOutline,
@@ -41,6 +96,9 @@ export default {
       calendarNumberOutline,
       cartOutline,
       qrCodeOutline,
+      refreshing,
+      refreshOutline,
+      pwaStat,
     }
   }
 }

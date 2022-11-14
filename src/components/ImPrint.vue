@@ -43,9 +43,9 @@ export default defineComponent ({
   setup() {
     return {
       informationCircleOutline,shieldHalfOutline,logoGithub,
-      gdprUrl:"https://www.karlsruhe.de/impressum/datenschutz.de",
-      imprintUrl: "https://www.karlsruhe.de/impressum.de",
-      gitUrl: "https://github.com/digital-codes/lerninseln",
+      gdprUrl:"https://www.karlsruhe.de/datenschutz",
+      imprintUrl: "https://www.karlsruhe.de/impressum",
+      gitUrl: "https://github.com/stadt-karlsruhe/lerninseln-pwa",
     }
   },
 
