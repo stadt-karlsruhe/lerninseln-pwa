@@ -23,7 +23,11 @@
         <ion-tab-button class="ka-tab-btn" >
           <ion-label>{{ pwaStat }} </ion-label>
         </ion-tab-button>
-       
+
+        <ion-item>
+          <ion-checkbox v-model="tglState" slot="start" @click="toggle"></ion-checkbox>
+        </ion-item>
+
       </ion-tab-bar>
     </ion-tabs>
   </ion-page>
@@ -33,6 +37,11 @@
 import { IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage } from '@ionic/vue';
 import { IonSpinner } from '@ionic/vue';
 import { ref } from "vue"
+
+import {
+  IonCheckbox,
+} from '@ionic/vue';
+
 
 import { 
   refreshOutline,
@@ -57,6 +66,7 @@ export default {
   components: { 
     IonLabel, IonRouterOutlet, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage,
     IonSpinner,
+    IonCheckbox,
   },
   methods: {
     refreshCompleted() {
@@ -76,6 +86,19 @@ export default {
       setTimeout(this.refreshCompleted,1000)
       this.pwaStat = stat
     },
+    toggle(){
+      console.log("toggle:",this.tglState) 
+      //this.checkToggle(!ev.checked)
+      this.checkToggle(!this.tglState)
+    },
+    checkToggle(shouldCheck) {
+      console.log("check:",shouldCheck)
+      if (shouldCheck)
+        document.body.classList.toggle('dark', true);
+      else
+        document.body.classList.toggle('dark', false);
+      //this.toggle.checked = shouldCheck;
+    },
   },
   inject: {
     emitter: {
@@ -87,6 +110,8 @@ export default {
     this.emitter.on("info",e => this.statUpdate(e)) 
   },
   setup() {
+    const tglState = ref(0)
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
     const refreshing = ref(false)
     const pwaStat = ref("Ready")
     return {
@@ -99,6 +124,8 @@ export default {
       refreshing,
       refreshOutline,
       pwaStat,
+      prefersDark,
+      tglState,
     }
   }
 }
