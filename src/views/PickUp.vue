@@ -14,7 +14,7 @@
           <ion-label>Angebote</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button class="ka-tab-btn" @click="refresh">
+        <ion-tab-button v-if="onMap" class="ka-tab-btn" @click="refresh">
           <ion-spinner v-if="refreshing" name="lines-small"></ion-spinner>
           <ion-icon v-else :icon="refreshOutline" />
           <ion-label>Refresh</ion-label>
@@ -86,6 +86,10 @@ export default {
       setTimeout(this.refreshCompleted,1000)
       this.pwaStat = stat
     },
+    tabUpdate(stat) {
+      console.log("Map:",stat)
+      this.onMap = stat
+    },
     toggle(){
       console.log("toggle changed to:",this.tglState) 
       //this.checkToggle(!ev.checked)
@@ -108,13 +112,16 @@ export default {
   mounted(){
     // set emitter target
     this.emitter.on("info",e => this.statUpdate(e)) 
+    this.emitter.on("map",e => this.tabUpdate(e)) 
   },
   setup() {
     const tglState = ref(0)
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
     const refreshing = ref(false)
     const pwaStat = ref("Ready")
+    const onMap = ref(false)
     return {
+      onMap,
       homeOutline, 
       albumsOutline,
       mapOutline,
