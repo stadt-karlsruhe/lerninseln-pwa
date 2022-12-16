@@ -261,6 +261,18 @@ export default defineComponent( {
       from: 'emitter'
     }
   },
+  watch: {
+    '$route' (to, from) {
+      //console.log('Rout update2',to,from);
+      if (to.path == "/map") {
+        console.log('Now on map view');
+        this.emitter.emit("map",true)
+      } else {
+        console.log('Leaving map view');
+        this.emitter.emit("map",false)
+      }
+    },
+  },
   setup() {
     const events = ref([])
     const eventList = ref([])

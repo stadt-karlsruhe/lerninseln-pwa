@@ -99,6 +99,10 @@ export default {
       setTimeout(this.refreshCompleted,1000)
       this.pwaStat = stat
     },
+    tabUpdate(stat) {
+      console.log("Map:",stat)
+      this.onMap = stat
+    },
     toggle(){
       console.log("toggle changed to:",this.tglState) 
       //this.checkToggle(!ev.checked)
@@ -137,7 +141,9 @@ export default {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
     const refreshing = ref(false)
     const pwaStat = ref("Ready")
+    const onMap = ref(false)
     return {
+      onMap,
       homeOutline, 
       albumsOutline,
       mapOutline,
