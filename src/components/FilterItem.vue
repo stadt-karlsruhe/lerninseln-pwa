@@ -126,29 +126,24 @@ export default defineComponent ({
 
 }
 
-.filterIcon, filterIcon .dark, filterIcon ::after, filterIcon ::before, filterIcon ::backDrop {
+.filterIcon, .filterIcon ::after, .filterIcon ::before, .filterIcon ::backDrop {
   text-align: center;
   margin-left:auto;
   margin-right:auto;
   width:100%;
-  background: #ffffff;
-  background-color: #fffffff;
-  border-bottom: solid 4px #5260ff; 
+  background: #fff;
+  background-color: #fff;
+  border-bottom: solid 4px #5260ff !important;
 }
 
-.filterIcon .dark, filterIcon  .dark ::after, filterIcon  .dark ::before, filterIcon  .dark ::backDrop {
+.filterIcon .dark, .filterIcon .dark ::after, .filterIcon  .dark ::before, .filterIcon  .dark ::backDrop {
   text-align: center;
   margin-left:auto;
   margin-right:auto;
   width:100%;
   background: #ffffff;
   background-color: #ffffff;
-  border-bottom: solid 4px #5260ff; 
-}
-
-.filterIcon .dark {
-  background: #ffffff;
-  border-bottom: solid 4px #5260ff; 
+  border-bottom: solid 4px #5260ff !important; 
 }
 
 .filterToggle {
@@ -172,6 +167,5 @@ ion-item {
 ion-popover {
     --offset-x: -20px;
   }
-
 
 </style>
