@@ -195,7 +195,10 @@ export default defineComponent( {
       const dy = detail.deltaY;
       const vy = detail.velocityY;
       //console.log(dy,vy)
-      if ((dy > 50) && (vy > 1)) this.rl()
+      if ((dy > 50) && (vy > 1)) {
+        this.emitter.emit("showFetching")
+        this.rl()
+      }
     }
   },
   async beforeMount() {

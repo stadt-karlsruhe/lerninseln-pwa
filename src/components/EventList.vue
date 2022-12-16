@@ -11,7 +11,7 @@
           <ion-item>
             <ion-thumbnail 
               slot="start">
-              <img :src="item.icon"/>
+              <img class="thumb" :src="item.icon"/>
             </ion-thumbnail>
             <ion-text class="previewText">
             {{item.txt}}
@@ -202,5 +202,10 @@ input.eventCheck  {
   /* ellispis only with nowrap which gives only 1 line */
   text-overflow: ellipsis;
 }
+
+.thumb {
+  object-fit:fill;
+}
+
 </style>
 

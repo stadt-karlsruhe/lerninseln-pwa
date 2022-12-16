@@ -55,6 +55,13 @@ export default  defineComponent ({
     return {
     } 
   },
+  watch: {
+    '$route' (to, from) {
+      if (to.path == "/intro") {
+        console.log('Now on intro');
+      }
+    }
+  },
   methods : {
     onSwipe(detail) {
       const type = detail.type;

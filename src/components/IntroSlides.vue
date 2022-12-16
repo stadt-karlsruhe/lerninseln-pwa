@@ -32,18 +32,8 @@ export default defineComponent({
   name: "IntroSlides",
   watch: {
     '$route' (to, from) {
-      //console.log('Rout update2',to,from);
-      if (from.path == "/intro") {
-        if (this.sliderLoaded) {
-          this.$refs.slider.$el.stopAutoplay().then(() => {console.log("Autoplay stopped")})
-        }
-        console.log('Leaving');
-      }
       if (to.path == "/intro") {
         console.log('Now on intro');
-        if (this.sliderLoaded) {
-          this.$refs.slider.$el.startAutoplay().then(() => {console.log("Autoplay started")})
-        }
       }
     }
   },
